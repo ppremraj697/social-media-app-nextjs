@@ -1,6 +1,6 @@
 import { IUser } from "@/types/user";
 import mongoose, { Schema, Document, models, Model } from "mongoose";
-import { IComment, ICommentBase } from "./comment";
+import { Comment, IComment, ICommentBase } from "./comment";
 
 export interface IPostBase {
     user: IUser;
@@ -48,3 +48,64 @@ const PostSchema = new Schema<IPostDocument>(
         timestamps: true,
     }
 );
+
+PostSchema.methods.likePost = async function (userId: string) {
+    try {
+        await this.updateOne({ $addToSet: { likes: userId } })
+    } catch (error) {
+        console.log("Error when liking the post: ", error)
+    }
+}
+
+PostSchema.methods.unlikePost = async function (userId: string) {
+    try {
+        await this.updateOne({ $pull: { likes: userId } })
+    } catch (error) {
+        console.log("Error when unliking the post: ", error)
+    }
+}
+
+PostSchema.methods.removePost = async function () {
+    try {
+        await this.model("Post").deleteOne({ _id: this._id })
+    } catch (error) {
+        console.log("Error when deleting the post: ", error)
+    }
+}
+
+PostSchema.methods.commentOnPost = async function (commentToAdd: ICommentBase) {
+    try {
+        const comment = await Comment.create(commentToAdd)
+    } catch (error) {
+        console.log("Error when commenting on the post: ", error)
+    }
+}
+
+PostSchema.methods.getAllComments = async function () {
+    try {
+        await this.populate({
+            path: "comments",
+            options: { sort: { createdAt: -1 } }
+        })
+    } catch (error) {
+        console.log("Error when getting all the comments: ", error)
+    }
+}
+
+PostSchema.methods.getAllComments = async function () {
+    try {
+        const posts = await this.find()
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "comments",
+                options: { sort: { createdAt: -1 } }
+            })
+            .lean(); //lean() to convert Mongoose object to plain JS Object
+
+
+    } catch (error) {
+        console.log("Error when getting all the posts: ", error)
+    }
+}
+
+export const Post = models.Post as IPostModel || mongoose.model<IPostDocument, IPostModel>("Post", PostSchema)
