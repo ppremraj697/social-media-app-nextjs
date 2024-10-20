@@ -7,6 +7,7 @@ export interface ICommentBase {
 }
 
 export interface IComment extends Document, ICommentBase {
+    _id: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

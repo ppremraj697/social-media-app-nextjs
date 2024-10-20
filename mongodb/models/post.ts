@@ -28,7 +28,7 @@ interface IPostStatics {
     getAllPosts(): Promise<IPostDocument[]>;
 }
 
-export interface IPostDocument extends IPost, IPostMethods { }//singular instance of a post
+export interface IPostDocument extends IPost, IPostMethods { _id: mongoose.Types.ObjectId; }//singular instance of a post
 interface IPostModel extends IPostStatics, Model<IPostDocument> { }//all posts
 
 const PostSchema = new Schema<IPostDocument>(
@@ -76,6 +76,8 @@ PostSchema.methods.removePost = async function () {
 PostSchema.methods.commentOnPost = async function (commentToAdd: ICommentBase) {
     try {
         const comment = await Comment.create(commentToAdd)
+        this.comments.push(comment._id);
+        await this.save()
     } catch (error) {
         console.log("Error when commenting on the post: ", error)
     }
@@ -87,12 +89,14 @@ PostSchema.methods.getAllComments = async function () {
             path: "comments",
             options: { sort: { createdAt: -1 } }
         })
+
+        return this.comments;
     } catch (error) {
         console.log("Error when getting all the comments: ", error)
     }
 }
 
-PostSchema.methods.getAllComments = async function () {
+PostSchema.statics.getAllPosts = async function () {
     try {
         const posts = await this.find()
             .sort({ createdAt: -1 })
@@ -102,7 +106,14 @@ PostSchema.methods.getAllComments = async function () {
             })
             .lean(); //lean() to convert Mongoose object to plain JS Object
 
-
+        return posts.map((post: IPostDocument) => ({
+            ...post,
+            _id: post._id.toString(),
+            comments: post.comments?.map((comment: IComment) => ({
+                ...comment,
+                _id: comment._id.toString()
+            }))
+        }));
     } catch (error) {
         console.log("Error when getting all the posts: ", error)
     }
