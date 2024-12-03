@@ -1,6 +1,7 @@
 'use server'
 
 import { AddPostRequestBody } from "@/app/api/posts/route";
+import connectDB from "@/mongodb/db";
 import { Post } from "@/mongodb/models/post";
 import { IUser } from "@/types/user";
 import { currentUser } from "@clerk/nextjs/server"
@@ -29,6 +30,8 @@ export default async function createPostAction(formData: FormData) {
     }
 
     try {
+        await connectDB()
+
         if (image.size > 0) {
             //1. Upload the image if there is one - MS Blob Storage
             //2. Create post in database with image
