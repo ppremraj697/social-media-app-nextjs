@@ -1,6 +1,6 @@
 import connectDB from "@/mongodb/db";
 import { Post } from "@/mongodb/models/post";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: { post_id: string } }) {
@@ -30,6 +30,7 @@ export interface LikePostRequestBody {
 export async function POST(request: Request, { params }: { params: { post_id: string } }) {
     auth().protect();
 
+    // await currentUser() --> A more safer and production level approach
     await connectDB();
 
     const { userId }: LikePostRequestBody = await request.json();
