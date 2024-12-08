@@ -5,8 +5,16 @@ import connectDB from "@/mongodb/db";
 import { Post } from "@/mongodb/models/post";
 import { IUser } from "@/types/user";
 import { currentUser } from "@clerk/nextjs/server"
+import { v2 as cloudinary } from 'cloudinary';
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET
+});
 
 export default async function createPostAction(formData: FormData) {
+    await connectDB()
     const user = await currentUser();
 
     if (!user) {
@@ -29,16 +37,19 @@ export default async function createPostAction(formData: FormData) {
         lastName: user.lastName || ""
     }
 
+    // let uploadResponse;
     try {
         await connectDB()
 
         if (image.size > 0) {
-            //1. Upload the image if there is one - MS Blob Storage
+            //1. Upload the image if there is one - Cloudinary
+            // console.log(image)
+            // uploadResponse = await cloudinary.uploader.upload(image)
             //2. Create post in database with image
             const body: AddPostRequestBody = {
                 user: userDB,
                 text: postInput,
-                // imageUrl: image_url
+                // imageUrl: uploadResponse.secure_url
             }
             await Post.create(body);
         } else {
