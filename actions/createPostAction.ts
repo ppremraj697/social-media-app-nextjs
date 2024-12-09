@@ -13,21 +13,13 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET
 });
 
-export default async function createPostAction(formData: FormData) {
-    await connectDB()
+export default async function createPostAction(inputText: string, selectedFile: string) {
+    await connectDB();
     const user = await currentUser();
+    if (!user) throw new Error('User not athenticated');
+    if (!inputText) throw new Error('Input field is required');
 
-    if (!user) {
-        throw new Error("User not authenticated");
-    }
-
-    const postInput = formData.get("postInput") as string;
-    const image = formData.get("image") as File;
-    let imageUrl: string | undefined;
-
-    if (!postInput) {
-        throw new Error("Post input is required");
-    }
+    const image = selectedFile;
 
     //define the user
     const userDB: IUser = {
@@ -37,26 +29,24 @@ export default async function createPostAction(formData: FormData) {
         lastName: user.lastName || ""
     }
 
-    // let uploadResponse;
+    let uploadResponse;
     try {
-        await connectDB()
-
-        if (image.size > 0) {
+        if (image) {
             //1. Upload the image if there is one - Cloudinary
             // console.log(image)
-            // uploadResponse = await cloudinary.uploader.upload(image)
+            uploadResponse = await cloudinary.uploader.upload(image)
             //2. Create post in database with image
             const body: AddPostRequestBody = {
                 user: userDB,
-                text: postInput,
-                // imageUrl: uploadResponse.secure_url
+                text: inputText,
+                imageUrl: uploadResponse.secure_url
             }
             await Post.create(body);
         } else {
             //1.Create post in database without image
             const body: AddPostRequestBody = {
                 user: userDB,
-                text: postInput
+                text: inputText
             }
 
             await Post.create(body)

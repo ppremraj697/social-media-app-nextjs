@@ -7,37 +7,39 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import createPostAction from "@/actions/createPostAction";
 import Image from "next/image";
+import { readFileAsDataUrl } from "@/lib/utils";
 
 const PostForm = () => {
 
     const ref = useRef<HTMLFormElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { user } = useUser();
-    const [preview, setPreview] = useState<string | null>(null);
+    const [preview, setPreview] = useState<string>("");
 
     const handlePostAction = async (formData: FormData) => {
         const formDataCopy = formData;
         ref.current?.reset();
 
-        const text = formDataCopy.get("postInput") as string;
+        const inputText = formDataCopy.get("inputText") as string;
 
-        if (!text.trim()) {
+        if (!inputText.trim()) {
             throw new Error("You must provide a post input");
         }
 
-        setPreview(null);
+        setPreview("");
 
         try {
-            await createPostAction(formDataCopy);
+            await createPostAction(inputText, preview);
         } catch (error) {
             console.log("Error creating post: ", error);
         }
     };
 
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            setPreview(URL.createObjectURL(file));
+            const dataUrl = await readFileAsDataUrl(file);
+            setPreview(dataUrl);
         }
     };
 
@@ -57,7 +59,7 @@ const PostForm = () => {
                         </AvatarFallback>
                     </Avatar>
 
-                    <input type="text" name="postInput" placeholder="Start writing a post..." className="flex-1 outline-none rounded-full py-3 px-4 border" />
+                    <input type="text" name="inputText" placeholder="Start writing a post..." className="flex-1 outline-none rounded-full py-3 px-4 border" />
 
                     <input ref={fileInputRef} type="file" name="image" accept="image/*" hidden onChange={handleImageChange} />
 
@@ -68,7 +70,7 @@ const PostForm = () => {
 
                 {preview && (
                     <div className="mt-3">
-                        <img src={preview} alt="Preview" className="w-full object-cover" />
+                        <Image width={50} height={50} src={preview} alt="Preview" className="w-full object-cover" />
                     </div>
                 )}
 
@@ -80,7 +82,7 @@ const PostForm = () => {
 
                     {/* Add a remove preview button */}
                     {preview && (
-                        <Button variant="outline" type="button" onClick={() => setPreview(null)}>
+                        <Button variant="outline" type="button" onClick={() => setPreview("")}>
                             <XIcon className="mr-2" size={16} color="currentColor" />
                             Remove Image
                         </Button>
