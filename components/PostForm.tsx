@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import createPostAction from "@/actions/createPostAction";
 import Image from "next/image";
 import { readFileAsDataUrl } from "@/lib/utils";
+import { toast } from "sonner";
 
 const PostForm = () => {
 
@@ -47,8 +48,14 @@ const PostForm = () => {
         <div className="mb-2">
             <form ref={ref} action={(FormData) => {
                 //Handle form submission with server action
-                handlePostAction(FormData);
+                const promise = handlePostAction(FormData);
+                
                 //Toast notification based on the promise above
+                toast.promise(promise, {
+                    loading: "Creating post...",
+                    success: "Post Created",
+                    error: "Failed to create post"
+                })
             }} className="p-3 bg-white rounded-lg border">
                 <div className="flex items-center space-x-2">
                     <Avatar>
@@ -75,7 +82,7 @@ const PostForm = () => {
                 )}
 
                 <div className="flex justify-end mt-2 space-x-2">
-                    <Button type="button" onClick={() => fileInputRef.current?.click()}>
+                    <Button type="button" variant={preview ? "secondary" : "outline"} onClick={() => fileInputRef.current?.click()}>
                         <ImageIcon className="mr-2" size={16} color="currentColor" />
                         {preview ? "Change" : "Add"} image
                     </Button>

@@ -9,6 +9,8 @@ import { Button } from './ui/button';
 import { Trash2 } from 'lucide-react';
 import deletePostAction from '@/actions/deletePostAction';
 import Image from 'next/image';
+import PostOptions from './PostOptions';
+import { toast } from 'sonner';
 
 function Post({ post }: { post: IPostDocument }) {
     const { user } = useUser();
@@ -49,6 +51,11 @@ function Post({ post }: { post: IPostDocument }) {
                             const promise = deletePostAction(post._id.toString())
 
                             //Toast
+                            toast.promise(promise,{
+                                loading: "Deleting post...",
+                                success: "Post Deleted",
+                                error: "Failed to delete post"
+                            })
                         }}>
                             <Trash2 />
                         </Button>
@@ -74,6 +81,7 @@ function Post({ post }: { post: IPostDocument }) {
             </div>
 
             {/* PostOptions */}
+            <PostOptions post={post} />
         </div>
     )
 }
