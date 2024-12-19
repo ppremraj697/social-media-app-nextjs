@@ -6,6 +6,7 @@ import { Post } from "@/mongodb/models/post";
 import { IUser } from "@/types/user";
 import { currentUser } from "@clerk/nextjs/server"
 import { v2 as cloudinary } from 'cloudinary';
+import { revalidatePath } from "next/cache";
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -55,5 +56,5 @@ export default async function createPostAction(inputText: string, selectedFile: 
         throw new Error("Failed to create new post: ", error)
     }
 
-    //revalidatePath '/' - home page 
+    revalidatePath('/')
 }
