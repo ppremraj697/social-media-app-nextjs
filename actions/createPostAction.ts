@@ -34,7 +34,6 @@ export default async function createPostAction(inputText: string, selectedFile: 
     try {
         if (image) {
             //1. Upload the image if there is one - Cloudinary
-            // console.log(image)
             uploadResponse = await cloudinary.uploader.upload(image)
             //2. Create post in database with image
             const body: AddPostRequestBody = {
