@@ -97,16 +97,16 @@ function PostOptions({ post }: { post: IPostDocument }) {
                     })
                 }}>
                     <ThumbsUpIcon className={cn("mr-1", liked && "text-[#4881c2] fill-[#4881c2]")} />
-                    <p>Like</p>
+                    Like
                 </Button>
 
                 <Button variant="ghost" className="postButton" onClick={() => setIsCommentOpen(!isCommentsOpen)}>
                     <MessageCircle className={cn("mr-1", isCommentsOpen && "text-gray-600 fill-gray-600")} />
-                    <p className="">Comment</p>
+                    Comment
                 </Button>
 
-                {/* <Button variant="ghost" className="postButton"><Repeat2 className="mr-1" /> <p>Repost</p></Button> */}
-                {/* <Button variant="ghost" className="postButton"><Send className="mr-1" /> <p>Send</p></Button> */}
+                <Button variant="ghost" className="postButton"><Repeat2 className="mr-1" /> Repost</Button>
+                <Button variant="ghost" className="postButton"><Send className="mr-1" /> Send</Button>
             </div>
 
             {isCommentsOpen && (

@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { IPostDocument } from "@/mongodb/models/post";
+import { comment } from "postcss";
 
 const UserInformation = async ({ posts }: { posts: IPostDocument[] }) => {
 
