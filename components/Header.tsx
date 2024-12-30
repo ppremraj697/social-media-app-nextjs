@@ -23,7 +23,7 @@ const Header = () => {
             </div>
 
             <div className="flex items-center space-x-4 px-6">
-                <Link href="/" className="icon" >
+                <Link href="/" className="icon hidden sm:flex" >
                     <HomeIcon className="h-5" />
                     <p>Home</p>
                 </Link>
@@ -35,20 +35,22 @@ const Header = () => {
                     <Briefcase className="h-5" />
                     <p>Job</p>
                 </Link>
-                <Link href="/" className="icon" >
+                <Link href="/" className="icon hidden sm:flex" >
                     <MessagesSquare className="h-5" />
                     <p>Messaging</p>
                 </Link>
 
-                <SignedIn >
-                    <UserButton />
-                </SignedIn>
+                <div className="hidden sm:block">
+                    <SignedIn >
+                        <UserButton />
+                    </SignedIn>
 
-                <SignedOut>
-                    <Button asChild variant="secondary">
-                        <SignInButton />
-                    </Button>
-                </SignedOut>
+                    <SignedOut>
+                        <Button asChild variant="secondary">
+                            <SignInButton />
+                        </Button>
+                    </SignedOut>
+                </div>
             </div>
         </div>
     )

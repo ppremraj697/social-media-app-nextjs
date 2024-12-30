@@ -96,17 +96,31 @@ function PostOptions({ post }: { post: IPostDocument }) {
                         error: liked ? "Failed to unlike post" : "Failed to like post"
                     })
                 }}>
-                    <ThumbsUpIcon className={cn("mr-1", liked && "text-[#4881c2] fill-[#4881c2]")} />
-                    Like
+                    <div className="flex flex-col items-center justify-center">
+                        <ThumbsUpIcon className={cn("mr-1", liked && "text-[#4881c2] fill-[#4881c2]")} />
+                        <div>Like</div>
+                    </div>
                 </Button>
 
                 <Button variant="ghost" className="postButton" onClick={() => setIsCommentOpen(!isCommentsOpen)}>
-                    <MessageCircle className={cn("mr-1", isCommentsOpen && "text-gray-600 fill-gray-600")} />
-                    Comment
+                    <div className="flex flex-col items-center justify-center">
+                        <MessageCircle className={cn("mr-1", isCommentsOpen && "text-gray-600 fill-gray-600")} />
+                        <div>Comment</div>
+                    </div>
                 </Button>
 
-                <Button variant="ghost" className="postButton"><Repeat2 className="mr-1" /> Repost</Button>
-                <Button variant="ghost" className="postButton"><Send className="mr-1" /> Send</Button>
+                <Button variant="ghost" className="postButton">
+                    <div className="flex flex-col items-center justify-center">
+                        <Repeat2 className="mr-1" />
+                        <div>Repost</div>
+                    </div>
+                </Button>
+                <Button variant="ghost" className="postButton">
+                    <div className="flex flex-col items-center justify-center">
+                        <Send className="mr-1" />
+                        <div>Send</div>
+                    </div>
+                </Button>
             </div>
 
             {isCommentsOpen && (
